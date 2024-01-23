@@ -3,6 +3,7 @@ import argparse
 import os
 import os.path as osp
 from copy import deepcopy
+import torch
 
 import mmengine
 from mmengine.config import Config, ConfigDict, DictAction
@@ -95,7 +96,8 @@ def merge_args(cfg, args):
         cfg.work_dir = osp.join('./work_dirs',
                                 osp.splitext(osp.basename(args.config))[0])
 
-    cfg.load_from = args.checkpoint
+    # cfg.load_from = args.checkpoint
+    cfg.load_from = None
 
     # enable automatic-mixed-precision test
     if args.amp:
@@ -182,6 +184,24 @@ def main():
         runner.test_evaluator.metrics.append(
             DumpResults(out_file_path=args.out))
 
+    test_pruned_model = True
+
+    if test_pruned_model:
+        print("Loading pruned model ...")
+        pruned_swin_t_model_flat = "/mnt/disks/ext/swin_t_checkpoints/swin_t_backbone_Pruned_25.pth"
+        # pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/best_accuracy_top1_epoch_10.pth"
+        pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_swin_t_tiny_in200_cont/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200_cont/best_accuracy_top1_epoch_32.pth"
+
+        model = torch.load(pruned_swin_t_model_flat)
+        model = model.eval()
+        weights = torch.load(pruned_weights)
+        model.load_state_dict(weights['state_dict'])
+
+        runner.model = model
+
+    print(runner.model)
+
+    print("start testing ...")
     # start testing
     metrics = runner.test()
 

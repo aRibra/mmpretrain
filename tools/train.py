@@ -3,6 +3,7 @@ import argparse
 import os
 import os.path as osp
 from copy import deepcopy
+import torch
 
 from mmengine.config import Config, ConfigDict, DictAction
 from mmengine.registry import RUNNERS
@@ -153,6 +154,24 @@ def main():
         # build customized runner from the registry
         # if 'runner_type' is set in the cfg
         runner = RUNNERS.build(cfg)
+
+    print("runner.model = ", runner.model)
+
+    load_pruned_model = True
+
+    if load_pruned_model:
+        pruned_model_path = "/mnt/disks/ext/swin_t_checkpoints/swin_t_backbone_Pruned_25.pth"
+        resume_pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/best_accuracy_top1_epoch_10.pth"
+
+        pruned_model = torch.load(pruned_model_path)
+        pruned_model.cuda()
+        pruned_model.train()
+        weights = torch.load(resume_pruned_weights)
+        pruned_model.load_state_dict(weights['state_dict'])
+
+        runner.model = pruned_model
+        print("[Pruned] runner.model = ", runner.model)
+        
 
     # start training
     runner.train()
