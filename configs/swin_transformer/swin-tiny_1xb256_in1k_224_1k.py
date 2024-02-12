@@ -4,7 +4,26 @@ _base_ = [
 
 
 
-data_root = "/mnt/disks/ext/data/imagenet/imagenette2-320"
+# data_root = "/mnt/disks/ext/data/imagenet/imagenette2-320"
+# data_root = "/home/exdata/istinye/imagenette2-320"
+
+data_root = "/home/exdata/istinye/imagenette2-320_edit_class"
+
+IMAGENET_CATEGORIES = [
+    "0_tench",
+    "1_english_springer",
+    "2_cassette_player",
+    "3_chainsaw",
+    "4_church",
+    "5_french_horn",
+    "6_garbage_truck",
+    "7_gas_pump",
+    "8_golf_ball",
+    "9_parachute"
+]
+METAINFO = {'classes': IMAGENET_CATEGORIES}
+
+
 
 dataset_type = 'CustomDataset'
 
@@ -112,11 +131,17 @@ val_dataloader = dict(
         type=dataset_type,
         data_root=data_root,
         data_prefix='val',
+        metainfo=METAINFO,
         with_label=True,
         pipeline=test_pipeline),
     sampler=dict(type='DefaultSampler', shuffle=False),
 )
-val_evaluator = dict(type='Accuracy', topk=(1, 5))
+
+val_evaluator = [
+    dict(type='ConfusionMatrix'),
+    dict(type='Accuracy', topk=(1, 5)),
+    dict(type='SingleLabelMetric')
+]
 
 # If you want standard test, please manually configure the test dataset
 test_dataloader = val_dataloader
