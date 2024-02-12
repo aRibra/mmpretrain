@@ -9,10 +9,15 @@
 ### Train pruned Swint-T command
 `python3 tools/start_train.sh`
 
-### Env
-_To be updated soon_
+### Conda Env
+[environment.yml](https://github.com/aRibra/mmpretrain/blob/main/environment.yml)
 
-
+### Weights
+[swin_t_JAN_27_Pruned_50.pth](https://drive.google.com/file/d/1SPgHNwhZTGtZh1RPiNQjhRQ5d31PgrKh/view?usp=drive_link)
+[best_accuracy_top1_epoch_45.pth](https://drive.google.com/file/d/1Lr0qNb8iotnOl3BuBYnCiT7YwhYmodET/view?usp=drive_link)
+[swin_t_backbone_Pruned_25.pth](https://drive.google.com/file/d/1P2mBoXd6lKaUI-S_ER4cQW1plIG8bkyj/view?usp=drive_link)
+[best_accuracy_top1_epoch_49.pth](https://drive.google.com/file/d/1Nc16l-AklBRhLRBfhJnrMj6P7hLD8RBQ/view?usp=drive_link)
+[best_accuracy_top1_epoch_49.pth](https://drive.google.com/file/d/1IERyN3uPb_K-ykq-gEikX1szmaktlXay/view?usp=drive_link)
 
 ------
 ------
