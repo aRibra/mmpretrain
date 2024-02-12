@@ -73,6 +73,11 @@ def parse_args():
         choices=['none', 'pytorch', 'slurm', 'mpi'],
         default='none',
         help='job launcher')
+    parser.add_argument(
+        '--test-pruned-model',
+        action='store_true',
+    )
+    
     # When using PyTorch version >= 2.0.0, the `torch.distributed.launch`
     # will pass the `--local-rank` parameter to `tools/train.py` instead
     # of `--local_rank`.
@@ -96,8 +101,10 @@ def merge_args(cfg, args):
         cfg.work_dir = osp.join('./work_dirs',
                                 osp.splitext(osp.basename(args.config))[0])
 
-    # cfg.load_from = args.checkpoint
-    cfg.load_from = None
+    if args.test_pruned_model:
+        cfg.load_from = None
+    else:
+        cfg.load_from = args.checkpoint
 
     # enable automatic-mixed-precision test
     if args.amp:
@@ -184,16 +191,24 @@ def main():
         runner.test_evaluator.metrics.append(
             DumpResults(out_file_path=args.out))
 
-    test_pruned_model = True
-
-    if test_pruned_model:
-        print("Loading pruned model ...")
-        pruned_swin_t_model_flat = "/mnt/disks/ext/swin_t_checkpoints/swin_t_backbone_Pruned_25.pth"
+    if args.test_pruned_model:
+        print("Loading and testing pruned model ...")
+        pruned_swin_t_model_flat = "/home/exdata/istinye/swin_t_training/swin_t_checkpoints/swin_t_backbone_Pruned_25.pth"
+        # pruned_swin_t_model_flat = "/home/exdata/istinye/swin_t_training/swin_t_checkpoints/swin_t_backbone_Pruned_50.pth"
         # pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/best_accuracy_top1_epoch_10.pth"
-        pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_swin_t_tiny_in200_cont/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200_cont/best_accuracy_top1_epoch_32.pth"
+        # pruned_weights = "/home/exdata/istinye/swin_t_training/pruned_swin_t_tiny_in200_cont/chkpnt/best_accuracy_top1_epoch_32.pth"
+        # pruned_weights = "/home/exdata/istinye/swin_t_training/pruned_swin_t_tiny_in200/chkpnt/epoch_27.pth"
+    
+        # 25
+        pruned_weights = "/home/exdata/istinye/swin_t_training/pruned_swin_t_tiny_IN320_JAN_27/swin_t_tiny_IN320_JAN_27/pruned_swin_t_tiny_IN320_JAN_27/best_accuracy_top1_epoch_49.pth"
+
+        # 50
+        # pruned_weights = "/home/exdata/istinye/swin_t_training/pruned_50_swin_t_tiny_IN320_JAN_27/pruned_50_swin_t_tiny_IN320_JAN_27/pruned_50_swin_t_tiny_IN320_JAN_27/best_accuracy_top1_epoch_45.pth"
+
 
         model = torch.load(pruned_swin_t_model_flat)
         model = model.eval()
+
         weights = torch.load(pruned_weights)
         model.load_state_dict(weights['state_dict'])
 
