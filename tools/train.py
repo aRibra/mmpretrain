@@ -146,6 +146,9 @@ def main():
     # merge cli arguments to config
     cfg = merge_args(cfg, args)
 
+    resume_pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_50_swin_t_tiny_IN320_JAN_27/pruned_50_swin_t_tiny_IN320_JAN_27/pruned_50_swin_t_tiny_IN320_JAN_27/epoch_45.pth"
+    cfg.load_from = resume_pruned_weights
+
     # build the runner from config
     if 'runner_type' not in cfg:
         # build the default runner
@@ -160,14 +163,24 @@ def main():
     load_pruned_model = True
 
     if load_pruned_model:
-        pruned_model_path = "/mnt/disks/ext/swin_t_checkpoints/swin_t_backbone_Pruned_25.pth"
-        resume_pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/best_accuracy_top1_epoch_10.pth"
+        # pruned_model_path = "/mnt/disks/ext/swin_t_checkpoints/swin_t_backbone_Pruned_25.pth"
+        # resume_pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/pruned_swin_t_tiny_in200/best_accuracy_top1_epoch_10.pth"
+
+        # pruned_model_path = "/mnt/disks/ext/swin_t_checkpoints/swin_t_JAN_27_Pruned_25.pth"
+        pruned_model_path = "/mnt/disks/ext/swin_t_checkpoints/swin_t_JAN_27_Pruned_50.pth"
+        resume_pruned_weights = "/mnt/disks/ext/exps_swin_t/pruned_50_swin_t_tiny_IN320_JAN_27/pruned_50_swin_t_tiny_IN320_JAN_27/pruned_50_swin_t_tiny_IN320_JAN_27/epoch_45.pth"
 
         pruned_model = torch.load(pruned_model_path)
         pruned_model.cuda()
         pruned_model.train()
-        weights = torch.load(resume_pruned_weights)
-        pruned_model.load_state_dict(weights['state_dict'])
+        # weights = pruned_model.state_dict()
+
+        chkpnt = torch.load(resume_pruned_weights)
+        weights = chkpnt['state_dict']
+        opt_state = chkpnt['optimizer']['state']
+        
+        # pruned_model.load_state_dict(weights)
+        # runner.optim_wrapper.optimizer.load_state_dict(opt_state)
 
         runner.model = pruned_model
         print("[Pruned] runner.model = ", runner.model)

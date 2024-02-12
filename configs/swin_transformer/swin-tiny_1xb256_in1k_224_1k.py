@@ -125,11 +125,12 @@ test_evaluator = val_evaluator
 
 
 # for batch in each gpu is batch_size, 1 gpu
-# lr = 5e-4 * batch_size * 1 / 128 = 0.001
+# lr = 128 / 1024 * 0.001 = 0.000125
 optim_wrapper = dict(
     optimizer=dict(
         type='AdamW',
-        lr=5e-4 * batch_size * 1 / 128,
+        #0.000125,
+        lr=1.0128e-05/5,
         weight_decay=0.05,
         eps=1e-8,
         betas=(0.9, 0.999)),
@@ -147,26 +148,26 @@ optim_wrapper = dict(
 )
 
 # learning policy
-param_scheduler = [
-    # warm up learning rate scheduler
-    dict(
-        type='LinearLR',
-        start_factor=1e-3,
-        by_epoch=True,
-        end=20,
-        # update by iter
-        convert_to_iter_based=True),
-    # main learning rate scheduler
-    dict(type='CosineAnnealingLR', eta_min=1e-5, by_epoch=True, begin=20)
-]
+# param_scheduler = [
+#     # warm up learning rate scheduler
+#     dict(
+#         type='LinearLR',
+#         start_factor=1e-3,
+#         by_epoch=True,
+#         end=3,
+#         # update by iter
+#         convert_to_iter_based=True),
+#     # main learning rate scheduler
+#     dict(type='CosineAnnealingLR', eta_min=1e-5, by_epoch=True, begin=3)
+# ]
 
 default_hooks = dict(
     checkpoint=dict(interval=1, max_keep_ckpts=10, save_best='auto'),
-    logger=dict(type='LoggerHook', interval=1)
+    logger=dict(type='LoggerHook', log_metric_by_epoch=True)
 )
 
 # train, val, test setting
-train_cfg = dict(by_epoch=True, max_epochs=300, val_interval=1)
+train_cfg = dict(by_epoch=True, max_epochs=50, val_interval=1)
 val_cfg = dict()
 test_cfg = dict()
 
