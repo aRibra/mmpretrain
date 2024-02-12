@@ -1,5 +1,23 @@
-<div align="center">
 
+# Training on imagenet-350px
+### Config
+[swin-tiny_1xb256_in1k_224_1k.py](https://github.com/aRibra/mmpretrain/blob/main/configs/swin_transformer/swin-tiny_1xb256_in1k_224_1k.py)
+
+### Train original Swint-T command
+`python3 tools/start_train.sh`
+
+### Train pruned Swint-T command
+`python3 tools/start_train.sh`
+
+### Env
+_To be updated soon_
+
+
+
+------
+------
+
+<div align="center">
 <img src="resources/mmpt-logo.png" width="600"/>
   <div>&nbsp;</div>
   <div align="center">
