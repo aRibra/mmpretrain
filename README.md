@@ -1,5 +1,8 @@
 
 # Training on imagenet-350px
+
+__Paper__: "*Optimizing Neural Networks for Edge Devices via Structural Pruning: An Empirical Study with DepGraph*"
+
 ### Config
 [swin-tiny_1xb256_in1k_224_1k.py](https://github.com/aRibra/mmpretrain/blob/main/configs/swin_transformer/swin-tiny_1xb256_in1k_224_1k.py)
 
